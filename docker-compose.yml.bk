@@ -1,0 +1,57 @@
+version: '3'
+services:
+  database:
+    image: mysql:5.7
+    container_name: mysql
+    restart: always
+    networks:
+      - wp-net
+    volumes:
+      - mysql-volume:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mysqlroot123
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+
+  wordpress:
+    hostname: myuser.wps
+    image: wordpress:php7.4-fpm-alpine
+    container_name: wordpress
+    restart: always
+    depends_on:
+      - database
+    networks:
+      - wp-net
+    volumes:
+      - wp-volume:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: database
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress 
+      WORDPRESS_DB_NAME: wordpress
+
+  redis:
+    image: redis
+    restart: always
+    volumes:
+      - /data/redis:/data
+    command: redis-server --appendonly yes
+    networks: 
+      - wp-net
+
+  nginx: 
+    image: nginx:alpine
+    container_name: nginx
+    restart: always
+    volumes:
+      - wp-volume:/var/www/html
+    networks:
+      - wp-net
+
+networks:
+  wp-net:
+volumes:
+  mysql-volume:
+  wp-volume:
+

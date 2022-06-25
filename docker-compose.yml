@@ -1,0 +1,61 @@
+version: '3'
+services:
+  database:
+    container_name: "${user}.mql"
+    hostname: "${user}.mql"
+    image: mysql:5.7
+    restart: always
+    networks:
+      - wp-net
+    volumes:
+      - "/home/${user}/mysql:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${mysqlroot}"
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: "${wppass}"
+
+  wordpress:
+    container_name: "${user}.wps"
+    hostname: "${user}.wps"
+    image: wordpress:php7.4-fpm-alpine
+    restart: always
+    depends_on:
+      - database
+    networks:
+      - wp-net
+    volumes:
+      - "/home/${user}/www:/var/www/html"
+    environment:
+      WORDPRESS_DB_HOST: "${user}.mql"
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: "${wppass}" 
+      WORDPRESS_DB_NAME: wordpress
+
+  redis:
+    container_name: "${user}.rdis"
+    hostname: "${user}.rdis"
+    image: redis
+    restart: always
+    volumes:
+      - "/home/${user}/redis:/data"
+    command: redis-server --appendonly yes
+    networks: 
+      - wp-net
+
+  nginx:
+    container_name: "${user}.wpress" 
+    hostname: "${user}.wpress"
+    image: nginx:alpine
+    restart: always
+    volumes:
+      - "/home/${user}/nginx/nginx.conf:/etc/nginx/conf.d/default.conf"
+      - "/home/${user}/www:/var/www/html"
+    networks:
+      - wp-net
+      - proxy_network
+networks:
+  wp-net:
+  proxy_network:
+   external: true
+

@@ -1,0 +1,18 @@
+version: '3'
+services:
+ app:
+  container_name: proxy
+  image: nginx
+  volumes:
+   - /usr/local/proxy/www/:/usr/share/nginx/html
+   - /usr/local/proxy/etc/:/etc/nginx/conf.d/
+   - /usr/local/proxy/letsencrypt/validation:/var/www/letsencrypt
+   - /usr/local/proxy/letsencrypt/etc:/etc/letsencrypt
+  ports:
+   - "80:80"
+   - "443:443"
+  networks:
+   - proxy_network
+networks:
+  proxy_network:
+   external: true
