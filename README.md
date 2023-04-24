@@ -20,7 +20,7 @@ cd multi-docker-wordpress-hosting-with-nginx-reverse-proxy
 
 ```sh
 cd multi-docker-wordpress-hosting-with-nginx-reverse-proxy/proxy/
-./host-up.sh username domainname.com
+./setup.sh
 ```
 This will start Nginx reverse proxy server route the traffic to internal docker websites.
 
@@ -31,7 +31,7 @@ This will start Nginx reverse proxy server route the traffic to internal docker 
 ./host-up.sh username domainname.com
 ```
 
-This will start the following containers:
+This will start the following containers and write password and ENV variables to /home/username/docker-compose/.env:
 
 - `mysql`: the MySQL database server
 - `phpmyadmin`: the web-based MySQL client
